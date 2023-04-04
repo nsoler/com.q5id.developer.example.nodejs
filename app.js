@@ -1,9 +1,8 @@
 const fetch = require('node-fetch');
 
-const CLIENT_ID = "";
-const SECRET = "";
-const TENANT_ID = "";
-const JWT_BASE_URL = "";
+const CLIENT_ID = "b7cd6404-dfb4-4d55-8a3a-879d04d72268:0651d719-28da-4433-a1c4-1d4a2e264ff2";
+const SECRET = "a152d18e-29c5-4223-8945-382c6569487a";
+const JWT_BASE_URL = "https://localhost:44381/api/v1/connect/token";
 const VERSION = "2.5.1";
 
 class ApiClient {
@@ -78,7 +77,7 @@ class BiometricPayload {
 async function main() {
   const apiClient = new ApiClient();
   const authService = new AuthenticateUserService(apiClient);
-  const USER_AUTHENTICATION_BASE_URL = "";
+  const USER_AUTHENTICATION_BASE_URL = "https://localhost:44361/api/v1/authenticate/";
   
   const payload = new BiometricPayload();
   payload.faceBytes = "";
