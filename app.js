@@ -1,90 +1,60 @@
-const fetch = require('node-fetch');
+const axios = require("axios");
+const querystring = require("querystring");
 
-const CLIENT_ID = "b7cd6404-dfb4-4d55-8a3a-879d04d72268:0651d719-28da-4433-a1c4-1d4a2e264ff2";
-const SECRET = "a152d18e-29c5-4223-8945-382c6569487a";
-const JWT_BASE_URL = "https://localhost:44381/api/v1/connect/token";
+const JWT_BASE_URL = "";
+const USER_AUTH_BASE_URL = "";
+const CLIENT_ID = "";
+const CLIENT_SECRET = "";
 const VERSION = "2.5.1";
+let token;
 
-class ApiClient {
-  constructor() {
-    this._httpClient = new fetch.FetchClient();
-    this._jsonOptions = { "method": "POST", "headers": { "Content-Type": "application/json" }};
-    this._token = null;
-  }
-  
-  async getToken() {
-    const postContent = {
-      client_id: CLIENT_ID,
-      client_secret: SECRET,
-      tenant_id: TENANT_ID,
-      content_type: "grant_access"
-    };
-    
-    const response = await this._httpClient.post(JWT_BASE_URL, this._jsonOptions, JSON.stringify(postContent));
-    
-    if (!response.ok) {
-      throw new Error(`API returned ${response.status}`);
+const getJwtAuthorization = (clientId, clientSecret) => {
+  return null;
+};
+
+const main = async () => {
+  const biometricPayload = {
+    faceBytes: "",
+    palmBytes: "",
+  };
+
+  const credentials = {
+    client_id: "",
+    client_secret: "",
+    grant_type: "client_credentials",
+  };
+
+  let url;
+  let requestBody;
+  let headers;
+
+  try {
+    if (token != null && token !== "") {
+      // Token exists, authenticate user
+      url = USER_AUTH_BASE_URL;
+      requestBody = querystring.stringify(biometricPayload);
+      headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+    } else {
+      // Get Bearer Token
+      url = JWT_BASE_URL;
+      requestBody = querystring.stringify(credentials);
+      headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
+      };
     }
-    
-    const content = await response.json();
-    
-    // return content;
-    return content.toString();
-  }
-  
-  async postAsync(url, postContent) {
-    if (!this._token) {
-      this._httpClient.setDefaultHeaders({"Authorization": `Bearer ${this._token}`});
-    }
-    
-    const response = await this._httpClient.post(url, this._jsonOptions, postContent);
-    
-    if (!response.ok) {
-      throw new Error(`API returned ${response.status}`);
-    }
-    
-    const content = await response.json();
-    
-    return content;
-  }
-}
 
-class AuthenticateUserService {
-  constructor(apiClient) {
-    this._apiClient = apiClient;
-  }
-  
-  async authenticateAsync(authUrl, payload) {
-    const postContent = JSON.stringify(payload);
-    const response = await this._apiClient.postAsync(authUrl, postContent);
-    return response;
-  }
-}
+    const response = await axios.post(url, requestBody, { headers });
 
-class UserAccount {
-  constructor() {
-    this.accountUuid = "";
+    console.log("Response status code:", response.status);
+    console.log("Response body:", response.data);
+  } catch (error) {
+    console.log("Error calling API:", error.message);
   }
-}
-
-class BiometricPayload {
-  constructor() {
-    this.faceBytes = "";
-    this.palmBytes = "";
-  }
-}
-
-async function main() {
-  const apiClient = new ApiClient();
-  const authService = new AuthenticateUserService(apiClient);
-  const USER_AUTHENTICATION_BASE_URL = "https://localhost:44361/api/v1/authenticate/";
-  
-  const payload = new BiometricPayload();
-  payload.faceBytes = "";
-  payload.palmBytes = "";
-  
-  const accountUuid = await authService.authenticateAsync(USER_AUTHENTICATION_BASE_URL, payload);
-  console.log(`Account Uuid - ${accountUuid.accountUuid}`);
-}
+};
 
 main();
