@@ -1,8 +1,8 @@
 const axios = require("axios");
 const querystring = require("querystring");
 
-const JWT_BASE_URL = "";
-const USER_AUTH_BASE_URL = "";
+const JWT_BASE_URL = "{host}/customer/connect/token";
+const USER_AUTH_BASE_URL = "{host}/authentication/tokens";
 const CLIENT_ID = "";
 const CLIENT_SECRET = "";
 const VERSION = "2.5.1";
